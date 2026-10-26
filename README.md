@@ -36,7 +36,7 @@ The `bug-report-writer` skill turns supplied evidence into a reproducible report
 - Playwright MCP for browser interaction
 - Agent Skills format
 
-**Copilot skill discovery status:** Native loading of `exploratory-testing` in GitHub Copilot has not been successfully validated. Do not assume that the skill is automatically discovered in every Copilot workspace.
+**Copilot skill discovery status:** On 2026-10-26, both `exploratory-testing` and `bug-report-writer` loaded successfully through GitHub Copilot's native Agent Skills discovery from `.github/skills/`. Their physical copies there were verified identical to the corresponding source folders under `skills/` using `diff -qr`. Discovery through the symlinks in `.claude/skills/` was not independently validated, and loading from a completely clean installation has not been tested.
 
 ---
 
@@ -83,6 +83,8 @@ qa-skills/
 │   └── exploratory-testing/
 │       ├── SKILL.md
 │       └── references/
+├── .github/
+│   └── skills/                 # Copilot-discovered physical copies of both skills
 ├── .claude/
 │   └── skills/
 │       ├── bug-report-writer -> ../../skills/bug-report-writer
@@ -107,7 +109,7 @@ qa-skills/
 
 The `skills/` directory contains the upstream skill workflows and their fork adaptations. The `examples/` directory contains the Sauce Demo session and evidence produced in this fork; it is not part of the upstream skill authorship.
 
-For GitHub Copilot, `.github/skills/` is an optional workspace-level installation destination; it is not present in this repository.
+For GitHub Copilot, `.github/skills/` contains physical copies of both skills. The copies were verified identical to their corresponding source folders under `skills/` with `diff -qr`.
 
 ---
 
@@ -141,7 +143,14 @@ To use the bug-report workflow as well:
 cp -R skills/bug-report-writer .github/skills/
 ```
 
-The repository also keeps the original skill sources under `skills/`. Copilot's native discovery of `exploratory-testing` has not been confirmed for this fork, so verify availability in your agent before relying on automatic loading.
+The repository keeps the skill sources under `skills/` and Copilot-ready copies under `.github/skills/`. To install or refresh a copy, repeat the copy commands above. To compare the installed copies with their sources, run:
+
+```bash
+diff -qr skills/exploratory-testing .github/skills/exploratory-testing
+diff -qr skills/bug-report-writer .github/skills/bug-report-writer
+```
+
+Both skills loaded successfully through native Copilot discovery from `.github/skills/` in this repository on 2026-10-26. This does not validate discovery from `.claude/skills/` symlinks or from a completely clean installation.
 
 ### 3. Configure browser access for web exploration
 
