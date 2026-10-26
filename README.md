@@ -1,74 +1,198 @@
-# 🧪 QA Skills
+# Agentic QA Skills
 
-> An open collection of QA **skills** — reusable instructions that help AI agents (Claude, Copilot, Codex, Gemini and others) with quality work, with a human always reviewing and approving the result.
-
-Instead of a library of code, this repository is made of **know-how**: each skill packages a QA practice so an AI agent can execute it consistently, using MCP servers and the tools your team already uses along the way.
-
-**Status:** 🚧 Early stage — two skills available today, more being added over time.
+![Agent Skills](https://img.shields.io/badge/Format-Agent%20Skills-5B6EE1)
+![GitHub Copilot](https://img.shields.io/badge/AI%20Agent-GitHub%20Copilot-000000)
+![Playwright MCP](https://img.shields.io/badge/Browser-Playwright%20MCP-2EAD33)
 
 ---
 
-## 💡 The idea
+## Agentic QA Skills Project
 
-There is no fixed flow to follow: each skill is independent and can be used on its own or combined with others, whenever it makes sense for your context. Pair skills with MCP servers (browser automation, issue trackers, API clients, repositories) and the agent stops being a chatbot and becomes a QA teammate.
+This repository packages QA workflows as reusable Agent Skills for AI agents. The skills provide task-specific instructions and references; an agent uses connected tools, while a human reviews and approves the work.
 
-## 🗂️ Skill catalog
+This repository is a fork of [Marina-Gajego/qa-skills](https://github.com/Marina-Gajego/qa-skills). The two skills listed below originate in that project. This fork contributes its own adaptations, documentation, and the Sauce Demo exploratory-session example.
 
-Skills available **today**:
+---
 
-| Category | Skill | Description |
-|---|---|---|
-| Testing | [`exploratory-testing`](skills/exploratory-testing/SKILL.md) | Run a real exploratory session (SBTM) on a web app, API, mobile or desktop app — driving the product through MCP tools (Playwright MCP by default) — and get a session report with charter, notes, defects with evidence, questions and next charters. Warns you when the tools to reach the product aren't connected. Validated on web (Playwright MCP) and REST APIs (`curl`); mobile and desktop targets are not validated yet. |
-| Report | [`bug-report-writer`](skills/bug-report-writer/SKILL.md) | Turn any evidence (notes, logs, failed tests) into a clear, reproducible, Jira-style bug report — built strictly from what you provide, with gaps marked instead of invented. Delivers in chat, as a Markdown file, or straight into your tracker via MCP. |
+## About the QA Skills Framework
 
-More skills (requirements analysis, test design, automation, code review, performance…) are planned. Have an idea? Open a **Skill idea** issue.
+An Agent Skill is a folder containing a `SKILL.md` with metadata and instructions, optionally accompanied by references and other resources. Each skill is a focused workflow that can be used independently.
 
-## 📁 Repository structure
+The framework does not include the application being tested. For exploratory testing, provide a target such as a URL or project folder and connect a tool that can interact with it.
 
-```
+---
+
+## Testing Approach
+
+Exploratory testing combines learning, experiment design, interaction, and observation. The `exploratory-testing` skill uses a charter to guide a session, records information and risks, and distinguishes observed defects from questions or unconfirmed behavior.
+
+The `bug-report-writer` skill turns supplied evidence into a reproducible report and marks missing information rather than filling gaps with assumptions. Human review remains part of both workflows.
+
+---
+
+## Technologies Used
+
+- GitHub Copilot
+- Playwright MCP for browser interaction
+- Agent Skills format
+
+**Copilot skill discovery status:** Native loading of `exploratory-testing` in GitHub Copilot has not been successfully validated. Do not assume that the skill is automatically discovered in every Copilot workspace.
+
+---
+
+## Skills Covered
+
+| Skill | Purpose |
+|---|---|
+| [`exploratory-testing`](skills/exploratory-testing/SKILL.md) | Conduct an evidence-based exploratory session on a web app, API, mobile or desktop app. |
+| [`bug-report-writer`](skills/bug-report-writer/SKILL.md) | Write a clear bug report from supplied findings and evidence without inventing missing details. |
+
+Both skills originate in the upstream QA Skills project. This fork does not claim original authorship of them.
+
+---
+
+## Demonstrated Exploratory Session
+
+The example documents six controlled experiments against the login interface at `https://www.saucedemo.com/`. It covers empty and partially filled forms, whitespace-only entries, whitespace-padded values, and synthetic invalid credentials. No valid credentials were used.
+
+| Experiment | Observed result |
+|---|---|
+| Empty fields | `Epic sadface: Username is required` |
+| Username only | `Epic sadface: Password is required` |
+| Password only | `Epic sadface: Username is required` |
+| Both fields contain only spaces | `Epic sadface: Username and password do not match any user in this service` |
+| Synthetic invalid values with surrounding spaces | The same credentials-do-not-match message; the values remained in the fields. |
+| Synthetic invalid values without surrounding spaces | The same credentials-do-not-match message; the values remained in the fields. |
+
+The message for invalid credentials appeared wrapped and partially obscured in the captured view. This is recorded as a **possible visual defect pending confirmation**, not as a confirmed defect; no visual acceptance criteria were available.
+
+![Sauce Demo login error after page stabilization](examples/exploratory-testing/saucedemo-login/05-stable-error.png)
+
+The complete session notes and the other four screenshots are available in the [session report](examples/exploratory-testing/saucedemo-login/session.md).
+
+---
+
+## Project Structure
+
+```text
 qa-skills/
-├── skills/                 # One folder per skill, each with a SKILL.md
-│   └── <skill-name>/
-│       ├── SKILL.md        # Instructions + metadata (required)
-│       ├── references/     # Checklists, heuristics, examples (optional)
-│       └── scripts/        # Helper scripts (optional)
+├── skills/
+│   ├── bug-report-writer/
+│   │   ├── SKILL.md
+│   │   └── references/
+│   └── exploratory-testing/
+│       ├── SKILL.md
+│       └── references/
+├── .claude/
+│   └── skills/
+│       ├── bug-report-writer -> ../../skills/bug-report-writer
+│       └── exploratory-testing -> ../../skills/exploratory-testing
+├── examples/
+│   └── exploratory-testing/
+│       └── saucedemo-login/
+│           ├── session.md
+│           ├── 01-empty-submit.png
+│           ├── 02-whitespace-only.png
+│           ├── 03-whitespace-padded-invalid.png
+│           ├── 04-invalid-credentials.png
+│           └── 05-stable-error.png
 ├── docs/
-│   ├── configuration.md    # Language preference (.qa-skills.yaml)
-│   └── mcp-and-tools.md    # MCP servers and tools the skills rely on
-├── .qa-skills.example.yaml # Preferences template (language)
-├── .github/ISSUE_TEMPLATE/ # "Skill idea" issue template
+│   ├── configuration.md
+│   └── mcp-and-tools.md
+├── .mcp.json
+├── .qa-skills.example.yaml
 ├── CONTRIBUTING.md
 └── LICENSE
 ```
 
-Skills follow the open **Agent Skills** format (a folder with a `SKILL.md` containing `name` and `description` frontmatter), so the same skill can be reused across different AI tools.
+The `skills/` directory contains the upstream skill workflows and their fork adaptations. The `examples/` directory contains the Sauce Demo session and evidence produced in this fork; it is not part of the upstream skill authorship.
 
-## 🚀 Using a skill
+For GitHub Copilot, `.github/skills/` is an optional workspace-level installation destination; it is not present in this repository.
 
-1. Copy (or symlink) the skill folder into your agent's skills directory — for example `~/.claude/skills/` for Claude Code.
-2. Ask the agent for the task in natural language (e.g. *"run an exploratory session on the checkout flow"*). The agent loads the skill automatically based on its description.
-3. Point the agent at what you want to work on: open your project folder together with the skill (in Claude Code, start in your project or run `/add-dir <path>`), or just give it a URL. This repository never contains your stack — each skill discovers your project's setup on its own.
-4. Connect the MCP servers listed in the skill for the best results.
+---
 
-### 🌎 Language: English, Português or Español
+## How to Use the Skills
 
-The repo is in English, but skills talk to you — and write reports — in the language you prefer. Drop a `.qa-skills.yaml` in your project (or in your home folder):
+### Prerequisites
 
-```yaml
-language: pt-BR      # en | pt-BR | es
-report_language: en  # optional: e.g. chat in Portuguese, file tickets in English
+- Git
+- GitHub Copilot in a workspace that supports Agent Skills
+- Node.js and npm if using the Playwright MCP server configured in this repository
+
+### 1. Get the repository
+
+```bash
+git clone https://github.com/pedrogitahy-qa/qa-skills.git
+cd qa-skills
 ```
 
-No file? Skills reply in the language you write in. Details in [docs/configuration.md](docs/configuration.md).
+### 2. Make a skill available to the agent
 
-## 🤝 Contributing
+For a workspace-level skill, copy its folder into the workspace's `.github/skills/` directory:
 
-Ideas and new skills are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) or open a **Skill idea** issue.
+```bash
+mkdir -p .github/skills
+cp -R skills/exploratory-testing .github/skills/
+```
 
-## 👩‍💻 Author
+To use the bug-report workflow as well:
 
-**Marina Gajego** — QA Engineer exploring how AI agents can raise the bar for software quality.
+```bash
+cp -R skills/bug-report-writer .github/skills/
+```
 
-## 📄 License
+The repository also keeps the original skill sources under `skills/`. Copilot's native discovery of `exploratory-testing` has not been confirmed for this fork, so verify availability in your agent before relying on automatic loading.
 
-[MIT](LICENSE)
+### 3. Configure browser access for web exploration
+
+The repository's `.mcp.json` contains a Playwright MCP server configuration:
+
+```json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    }
+  }
+}
+```
+
+The Playwright MCP connection was verified during a session, but whether GitHub Copilot automatically loaded this `.mcp.json` file—and the exact source of that session's configuration—was not verified. Use the MCP configuration mechanism supported by your agent and approve or start the server as required by that environment. Confirm the connection in the active session before interacting with a target. See [MCP servers and tools](docs/mcp-and-tools.md) for the framework's tool guidance.
+
+### 4. Request a focused session
+
+Give the agent a target, scope, and objective. For example:
+
+> Explore the login interface at `https://www.saucedemo.com/`. Check empty fields, partial input, whitespace, and synthetic invalid credentials. Do not use valid credentials. Ask before executing experiments.
+
+The skill's workflow begins by checking the target and available tools. Provide authorization before any interactions when required. For report language preferences, see [Configuration](docs/configuration.md).
+
+---
+
+## Coverage
+
+The included example covers six exploratory login submissions on Sauce Demo using Playwright MCP. It documents the observed messages, field behavior, unchanged URL, a possible visual issue pending confirmation, and the limits of that session.
+
+This example does not demonstrate valid authentication, post-login workflows, other browsers or devices, API testing, or a confirmed product defect. Mobile and desktop exploration are not demonstrated by this fork.
+
+---
+
+## Agentic QA Approach
+
+- Keep each skill focused on a QA workflow.
+- Use tools to interact with the real target and base findings on observed evidence.
+- Mark uncertainty, questions, and coverage gaps explicitly.
+- Keep a human in the review and approval loop.
+
+---
+
+## Contributing
+
+For skill and documentation contribution guidance, see [CONTRIBUTING.md](CONTRIBUTING.md). Changes specific to this fork should remain clearly distinguished from upstream skill content.
+
+---
+
+## Attribution and License
+
+The original QA Skills framework and skills are by **Marina Gajego**. This fork preserves the upstream MIT license and copyright notice in [LICENSE](LICENSE). Fork-specific adaptations and the Sauce Demo example are contributions in `pedrogitahy-qa/qa-skills`; they do not change the authorship of the original skills.
