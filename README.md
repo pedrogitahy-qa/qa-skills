@@ -1,3 +1,5 @@
+![QA Skills — Project Banner](docs/banner.png)
+
 # Agentic QA Skills
 
 ![Agent Skills](https://img.shields.io/badge/Format-Agent%20Skills-5B6EE1)
